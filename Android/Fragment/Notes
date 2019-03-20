@@ -1,0 +1,45 @@
+## Fragment inner class should be static
+
+https://stackoverflow.com/q/15571010/3409734
+
+I have a FragmentActivity class with inner class that should display Dialog. But I am required to make it static. Eclipse offers me to suppress error with @SuppressLint("ValidFragment"). Is it bad style if I do it and what are the possible consequences?
+
+```
+public class CarActivity extends FragmentActivity {
+//Code
+  @SuppressLint("ValidFragment")
+  public class NetworkConnectionError extends DialogFragment {
+    private String message;
+    private AsyncTask task;
+    private String taskMessage;
+    @Override
+    public void setArguments(Bundle args) {
+      super.setArguments(args);
+      message = args.getString("message");
+    }
+    public void setTask(CarActivity.CarInfo task, String msg) {
+      this.task = task;
+      this.taskMessage = msg;
+    }
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+      // Use the Builder class for convenient dialog construction
+      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+      builder.setMessage(message).setPositiveButton("Go back", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int id) {
+          Intent i = new Intent(getActivity().getBaseContext(), MainScreen.class);
+          startActivity(i);
+        }
+      });
+      builder.setNegativeButton("Retry", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int id) {
+          startDownload();
+        }
+      });
+      // Create the AlertDialog object and return it
+      return builder.create();
+    }
+  }
+  ```
